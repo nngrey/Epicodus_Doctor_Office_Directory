@@ -11,6 +11,7 @@ def main_menu
   puts "---------------"
   puts "Press 'd' to add a doctor"
   puts "Press 'p' to add a patient"
+  puts "Press 'i' to add an insurance company"
   puts "Press 'o' to see a list of doctors by specialty"
   puts "Press 'a' to see a list of patients by doctor"
   puts "Press 'x' to exit"
@@ -21,6 +22,8 @@ def main_menu
       add_doctor
     when 'p'
       add_patient
+    when 'i'
+      add_insurance
     when 'o'
       list_docs
     when 'a'
@@ -38,9 +41,15 @@ def add_doctor
   end
   puts "\nEnter your doctors specialty"
   dr_specialty = gets.chomp
-  new_doctor = Doctor.new({:name => doctor_name, :specialty_id => Specialty.all[dr_specialty.to_i - 1].id.to_i})
+  Insurance.all.each_with_index do |ins, index|
+    puts "#{index + 1}) #{ins.name}"
+  end
+  puts "\nWhich insurance does the doctor accept?"
+  dr_ins = gets.chomp
+  new_doctor = Doctor.new({:name => doctor_name, :specialty_id => Specialty.all[dr_specialty.to_i - 1].id.to_i, :insurance_id => Insurance.all[dr_ins.to_i - 1].id.to_i})
   new_doctor.save
   puts "You have added #{new_doctor.name}, a specialist in #{Specialty.all[dr_specialty.to_i - 1].name}"
+  puts "This doctor only takes the following insurance: #{Insurance.all[dr_ins.to_i - 1].name}"
   main_menu
 end
 
@@ -57,6 +66,15 @@ def add_patient
   new_patient = Patient.new({:name => patient_name, :birthday => patient_birthday, :dr_id => dr_id})
   new_patient.save
   puts "You have added #{new_patient.name}"
+  main_menu
+end
+
+def add_insurance
+  puts "Enter the name of the insurance company"
+  ins_co = gets.chomp
+  new_co = Insurance.new({:name => ins_co})
+  new_co.save
+  puts "You added #{new_co.name}"
   main_menu
 end
 

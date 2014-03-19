@@ -1,11 +1,12 @@
 class Doctor
 
-  attr_reader :name, :specialty_id, :id
+  attr_reader :name, :specialty_id, :id, :insurance_id
 
   def initialize(attributes)
     @name = attributes[:name]
     @specialty_id = attributes[:specialty_id]
     @id = attributes[:id]
+    @insurance_id = attributes[:insurance_id]
   end
 
   def self.all
@@ -15,7 +16,8 @@ class Doctor
       id = result['id'].to_i
       name = result['name']
       specialty_id = result['specialty_id'].to_i
-      list << Doctor.new({:id => id, :name => name, :specialty_id => specialty_id})
+      insurance_id = result['insurance_id'].to_i
+      list << Doctor.new({:id => id, :name => name, :specialty_id => specialty_id, :insurance_id => insurance_id})
     end
     list
   end
@@ -39,7 +41,7 @@ class Doctor
   end
 
   def save
-    results = DB.exec("INSERT INTO doctors (name, specialty_id) VALUES ('#{@name}', '#{@specialty_id.to_i}') RETURNING id;")
+    results = DB.exec("INSERT INTO doctors (name, specialty_id, insurance_id) VALUES ('#{@name}', '#{@specialty_id.to_i}', '#{insurance_id.to_i}') RETURNING id;")
     @id = results.first['id'].to_i
   end
 
